@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { auth } from '../configs/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
