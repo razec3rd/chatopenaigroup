@@ -12,8 +12,8 @@ const firebaseConfig = {
   projectId: "chatopenaigroup",
   storageBucket: "chatopenaigroup.appspot.com",
   messagingSenderId: "227327339500",
-  appId: "1:227327339500:web:89faae3fba4282d2842ec9",
-  measurementId: "G-FECKZ36527"
+  appId: "1:227327339500:web:2123dce7936e98e7842ec9",
+  measurementId: "G-Z7ZY9K9MS7"
 };
 
 // Initialize Firebase
