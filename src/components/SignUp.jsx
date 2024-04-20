@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { auth } from '../configs/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 function SignUp() {
   // State variables to store error message, email, and password
@@ -10,6 +10,10 @@ function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const redirectToSignIn = () => {
+    // Return the Navigate component to perform the redirection
+    return <Navigate to="/sign-in" />;
+  };
   // Function to handle sign up with email and password
   const signUpWithEmail = async () => {
     try {
@@ -23,8 +27,10 @@ function SignUp() {
       await createUserWithEmailAndPassword(auth, email, password);
 
       // Clear email and password fields after successful sign up
+      
       setEmail('');
       setPassword('');
+      redirectToSignIn();
     } catch (error) {
       // Handle specific error cases
       if (error.code === 'auth/email-already-in-use') {
@@ -53,7 +59,7 @@ function SignUp() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={signUpWithEmail}>Sign Up</button>
-      <Link to="/sign-in">Already have an account? Sign In</Link>
+
     </div>
   );
 }
