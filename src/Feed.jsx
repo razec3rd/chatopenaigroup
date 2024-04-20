@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { db, storage } from '../configs/firebase';
-import { collection, doc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 function createPost({ chatRoomId, user, title }) {
@@ -44,7 +43,6 @@ function createPost({ chatRoomId, user, title }) {
 
   return (
     <>
-      <Link to='/'>Back</Link>
       <h1>{title}</h1>
       <input
         type='text'
