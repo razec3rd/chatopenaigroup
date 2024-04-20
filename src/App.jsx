@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+
+import { auth } from './configs/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  // State variables to store user information and loading status
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // useEffect hook to listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      console.log('onAuthStateChanged', user);
+      setUser(user);
+      setLoading(false);
+    });
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  const onSignOut = async () => {
+    // Function to handle user sign out
+    await signOut(auth);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      {
+        loading ? <div>Loading...</div> : <>
+          {/* Render sign out button if user is logged in */}
+          {user ? <button onClick={onSignOut} className='sign-out'>Sign out</button> : null}
+          <Router>
+            <Routes>
+              {/* Route for sign up page */}
+              <Route path="/sign-up" element={user ? <Navigate to="/" /> : <SignUp />} />
+              {/* Route for sign in page */}
+              <Route path="/sign-in" element={user ? <Navigate to="/" /> : <SignIn />} />
+              {/* Route for chat room list page */}
+              <Route path="/" element={user ? <ChatRoomList /> : <Navigate to="/sign-in" />} />
+              {/* Route for individual chat room page */}
+              <Route path="/chat/:chatRoomId" element={user ? <ChatRoom user={user} /> : <Navigate to="/sign-in" />} />
+              {/* Route for 404 error page */}
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+          </Router>
+        </>
+      }
+    </div>
   )
 }
 
-export default App
+export default App;
