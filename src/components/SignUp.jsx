@@ -1,6 +1,8 @@
+
 import { useState } from 'react';
 import { auth } from '../configs/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 
 function SignUp() {
   // State variables to store error message, email, and password
@@ -29,6 +31,7 @@ function SignUp() {
         setErrorMessage('Cannot create an account with this email. Please sign in.');
       } else {
         setErrorMessage('Failed to sign up.');
+        console.log(error)
       }
     }
   };
@@ -50,6 +53,7 @@ function SignUp() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={signUpWithEmail}>Sign Up</button>
+      <Link to="/sign-in">Already have an account? Sign In</Link>
     </div>
   );
 }

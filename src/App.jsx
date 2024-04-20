@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { auth } from './configs/firebase';
+import { auth } from './configs/firebase';  
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 
 import SignIn from './components/SignIn';
@@ -28,13 +28,21 @@ function App() {
   }
 
   return (
+    
     <div>
-      {
-       <>
+       {
+        loading ? <div>Loading...</div> : <>
+          {/* Render sign out button if user is logged in */}
+          {user ? <button onClick={onSignOut} className='sign-out'>Sign out</button> :<SignUp />}
+          <Router>
+            <Routes>
               {/* Route for sign up page */}
-              <SignUp />
-              </>
-        
+              <Route path="/sign-up" element={user ? <SignUp /> : <SignUp />} />
+              {/* Route for sign in page */}
+              <Route path="/sign-in" element={user ? <SignIn /> : <SignIn />} />
+            </Routes>
+          </Router>
+        </>
       }
     </div>
   )
