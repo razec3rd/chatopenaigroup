@@ -5,18 +5,18 @@ import { collection, doc, getDoc, addDoc, query, orderBy, onSnapshot, serverTime
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 function ChatRoom({ user }) {
-  const { chatRoomId } = useParams();
+  const { comSecId } = useParams();
 
   const [title, setTitle] = useState('');
   const [list, setList] = useState([]);
   const [message, setMessage] = useState('');
 
-  const listCollection = collection(db, 'chat_message');
+  const listCollection = collection(db, 'comments');
 
   useEffect(() => {
     // Fetch the list of messages and the chat room title
     getList();
-    getDocument(chatRoomId);
+    getDocument(comSecId);
   }, []);
 
   // Function to fetch the list of messages
@@ -26,8 +26,8 @@ function ChatRoom({ user }) {
       const unsubscribe = onSnapshot(
         query(
           listCollection,
-          where('chatRoomId', '==', chatRoomId),
-          orderBy('timestamp')
+          where('comSecId', '==', comSecId),
+          orderBy('timeAdded')
         ),
         (snapshot) => {
           // Map the document data to an array of objects with id
@@ -44,7 +44,7 @@ function ChatRoom({ user }) {
   // Function to fetch the chat room document
   const getDocument = async (documentId) => {
     try {
-      const docRef = doc(db, 'chat_room', documentId);
+      const docRef = doc(db, 'comsec', documentId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const documentData = { ...docSnap.data(), id: docSnap.id };
@@ -64,11 +64,10 @@ function ChatRoom({ user }) {
 
       // Add a new message to the chat room
       await addDoc(listCollection, {
-        message,
-        senderName: user.displayName ?? user.email,
-        senderId: user.uid,
-        chatRoomId: chatRoomId,
-        timestamp: serverTimestamp()
+        userDisplayName: userDisplayName,
+        message: message,
+        comSecId: comSecId,
+        timeAdded: serverTimestamp()
       });
 
       setMessage('');
@@ -103,12 +102,12 @@ function ChatRoom({ user }) {
   return (
     <>
       <Link to='/'>Back</Link>
-      <h1>{title}</h1>
+      <h1>1</h1>
       {list.map((item, index) => (
-        item.timestamp ? (
+        item.timeAdded ? (
           <div style={{ marginBottom: 15 }} key={index}>
             <b>
-              {item.senderName}:<br /> {item.image ? <img src={item.image} alt='image' style={{ width: 200 }} /> : item.message}
+              {item.userDisplayName}:<br /> {item.image ? <img src={item.image} alt='image' style={{ width: 200 }} /> : item.message}
             </b>
             <br />
             <span>{item.timestamp?.toDate().toLocaleString()}</span>
